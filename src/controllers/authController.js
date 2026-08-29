@@ -120,14 +120,15 @@ const login = async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required.' });
     }
 
-    const user = await userModel.getUserByEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
+    const user = await userModel.getUserByEmail(normalizedEmail);
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials.' });
+      return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      return res.status(401).json({ error: 'Invalid credentials.' });
+      return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
     // Approval gate: block pending / rejected users.

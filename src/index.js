@@ -32,9 +32,6 @@ app.use('/admin', express.static(path.join(__dirname, '..', 'public', 'admin')))
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'index.html'));
 });
-app.get('/admin/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'index.html'));
-});
 
 // Root route redirects to /admin
 app.get('/', (req, res) => {
@@ -44,6 +41,12 @@ app.get('/', (req, res) => {
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Backend is running' });
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Unhandled server error:', err);
+  res.status(500).json({ error: err.message || 'Internal server error.' });
 });
 
 if (require.main === module) {
