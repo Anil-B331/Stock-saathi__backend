@@ -4,9 +4,6 @@ const migrate = async () => {
   try {
     console.log('Running migrations...');
     
-    // Drop old role check constraint so 'superadmin' role is allowed
-    await pool.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;`);
-
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -21,6 +18,9 @@ const migrate = async () => {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+
+    // Drop old role check constraint if it existed from previous versions
+    await pool.query(`ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check;`);
 
     // Ensure all columns exist for existing databases
     await pool.query(`
@@ -81,6 +81,7 @@ const migrate = async () => {
       console.error('\n💡 HINT: Render free tier does not support IPv6.');
       console.error('In Supabase -> Project Settings -> Database -> Connection Pooling, copy the Pooler connection string (port 6543 / 5432) which supports IPv4.\n');
     }
+    process.exit(1);
   } finally {
     pool.end();
   }
