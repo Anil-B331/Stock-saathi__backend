@@ -76,7 +76,11 @@ const migrate = async () => {
 
     console.log('Migrations completed successfully.');
   } catch (err) {
-    console.error('Migration failed:', err);
+    console.error('❌ Migration failed:', err.message);
+    if (err.code === 'ENETUNREACH') {
+      console.error('\n💡 HINT: Render free tier does not support IPv6.');
+      console.error('In Supabase -> Project Settings -> Database -> Connection Pooling, copy the Pooler connection string (port 6543 / 5432) which supports IPv4.\n');
+    }
   } finally {
     pool.end();
   }
