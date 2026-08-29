@@ -29,6 +29,17 @@ app.use('/api/admin', adminRoutes);
 
 // Serve the Super Admin web dashboard at /admin
 app.use('/admin', express.static(path.join(__dirname, '..', 'public', 'admin')));
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'index.html'));
+});
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'public', 'admin', 'index.html'));
+});
+
+// Root route redirects to /admin
+app.get('/', (req, res) => {
+  res.redirect('/admin');
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {

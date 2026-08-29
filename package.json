@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node scripts/migrate.js && node scripts/seed-superadmin.js && node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest",
     "migrate": "node scripts/migrate.js",
