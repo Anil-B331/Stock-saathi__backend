@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockSathi Admin Panel 🇳🇵</title>
+  <style>
+    :root {
+      --crimson: #C51D34;
+      --crimson-dark: #9E1B32;
+      --gold: #F59E0B;
+      --gold-light: #FEF3C7;
+      --emerald: #059669;
+      --emerald-light: #ECFDF5;
+      --danger: #EF4444;
+      --danger-light: #FEF2F2;
+      --slate: #0F172A;
+      --surface: #F8FAFC;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --muted: #64748B;
+      --text: #1E293B;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── LOGIN PAGE ── */
+    #login-page {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--crimson-dark) 0%, var(--crimson) 60%, #e05a70 100%);
+    }
+    .login-box {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    }
+    .login-logo { text-align: center; margin-bottom: 28px; }
+    .login-logo .emoji { font-size: 52px; }
+    .login-logo h1 { font-size: 24px; font-weight: 800; color: var(--slate); margin-top: 8px; }
+    .login-logo p { font-size: 14px; color: var(--muted); margin-top: 4px; }
+    .login-label { font-size: 13px; font-weight: 700; color: #334155; margin-bottom: 6px; display: block; }
+    .login-input {
+      width: 100%; padding: 12px 14px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 15px; color: var(--slate);
+      background: var(--surface); margin-bottom: 16px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-input:focus { border-color: var(--crimson); }
+    .login-btn {
+      width: 100%; padding: 14px; background: var(--crimson);
+      color: #fff; border: none; border-radius: 12px; font-size: 16px;
+      font-weight: 700; cursor: pointer; transition: background 0.2s;
+    }
+    .login-btn:hover { background: var(--crimson-dark); }
+    .login-error {
+      background: var(--danger-light); border: 1px solid #FCA5A5;
+      color: var(--danger); border-radius: 8px; padding: 10px 14px;
+      font-size: 13px; font-weight: 600; margin-bottom: 14px; display: none;
+    }
+
+    /* ── MAIN APP ── */
+    #app-page { display: none; flex-direction: column; min-height: 100vh; }
+
+    header {
+      background: var(--crimson);
+      padding: 14px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(197,29,52,0.3);
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+    .header-brand h1 { font-size: 20px; font-weight: 800; color: #fff; }
+    .header-badge {
+      background: var(--gold); color: var(--slate); font-size: 12px;
+      font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .logout-btn {
+      background: rgba(255,255,255,0.2); color: #fff; border: none;
+      padding: 7px 16px; border-radius: 8px; font-size: 13px;
+      font-weight: 700; cursor: pointer; transition: background 0.2s;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.3); }
+
+    .stats-bar {
+      display: flex; gap: 12px; padding: 16px 24px;
+      background: var(--card); border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat-chip {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700;
+    }
+    .stat-chip.pending { background: var(--gold-light); color: #92400E; }
+    .stat-chip.approved { background: var(--emerald-light); color: #065F46; }
+    .stat-chip.rejected { background: var(--danger-light); color: #991B1B; }
+    .stat-count { font-size: 18px; }
+
+    .tabs {
+      display: flex; gap: 0; padding: 0 24px; background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+    .tab-btn {
+      padding: 12px 20px; border: none; background: none;
+      font-size: 14px; font-weight: 600; color: var(--muted);
+      cursor: pointer; border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .tab-btn.active { color: var(--crimson); border-bottom-color: var(--crimson); }
+    .tab-btn:hover:not(.active) { color: var(--slate); }
+
+    .content { flex: 1; padding: 20px 24px; }
+
+    .search-bar {
+      display: flex; gap: 10px; margin-bottom: 16px;
+    }
+    .search-input {
+      flex: 1; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 14px; color: var(--slate);
+      background: var(--card); outline: none;
+    }
+    .search-input:focus { border-color: var(--crimson); }
+    .refresh-btn {
+      padding: 10px 18px; background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+      color: var(--slate); transition: all 0.2s;
+    }
+    .refresh-btn:hover { background: var(--crimson); color: #fff; border-color: var(--crimson); }
+
+    .user-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .user-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      transition: box-shadow 0.2s;
+    }
+    .user-card:hover { box-shadow: 0 3px 12px rgba(0,0,0,0.08); }
+    .user-card.pending { border-left: 4px solid var(--gold); }
+    .user-card.approved { border-left: 4px solid var(--emerald); }
+    .user-card.rejected { border-left: 4px solid var(--danger); }
+
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 16px; font-weight: 700; color: var(--slate); }
+    .user-meta { font-size: 13px; color: var(--muted); margin-top: 3px; }
+    .user-meta span { margin-right: 12px; }
+    .user-date { font-size: 11px; color: #94A3B8; margin-top: 4px; }
+
+    .status-badge {
+      padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+    .status-badge.pending { background: var(--gold-light); color: #92400E; }
+    .status-badge.approved { background: var(--emerald-light); color: #065F46; }
+    .status-badge.rejected { background: var(--danger-light); color: #991B1B; }
+
+    .actions { display: flex; gap: 8px; align-items: center; }
+    .action-btn {
+      padding: 8px 16px; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .approve-btn { background: var(--emerald-light); color: #065F46; }
+    .approve-btn:hover { background: var(--emerald); color: #fff; }
+    .reject-btn { background: var(--danger-light); color: #991B1B; }
+    .reject-btn:hover { background: var(--danger); color: #fff; }
+    .pending-btn { background: var(--gold-light); color: #92400E; }
+    .pending-btn:hover { background: var(--gold); color: #fff; }
+
+    .empty-state {
+      text-align: center; padding: 60px 24px;
+      color: var(--muted); font-size: 15px;
+    }
+    .empty-state .emoji { font-size: 48px; display: block; margin-bottom: 12px; }
+
+    .loading-spinner {
+      text-align: center; padding: 40px; color: var(--muted); font-size: 14px;
+    }
+
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--slate); color: #fff;
+      padding: 12px 20px; border-radius: 10px;
+      font-size: 14px; font-weight: 600;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      opacity: 0; transform: translateY(10px);
+      transition: all 0.3s; pointer-events: none; z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.success { background: var(--emerald); }
+    .toast.error { background: var(--danger); }
+
+    @media (max-width: 600px) {
+      .stats-bar { padding: 12px 14px; }
+      .content { padding: 14px; }
+      .user-card { flex-direction: column; align-items: flex-start; }
+      .actions { width: 100%; justify-content: flex-end; }
+      header { padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="emoji">🏪</div>
+      <h1>StockSathi Admin</h1>
+      <p>Super Admin Panel — Approve or reject new shop registrations</p>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <label class="login-label" for="admin-email">Email</label>
+    <input class="login-input" id="admin-email" type="email" placeholder="superadmin@stocksathi.com" />
+    <label class="login-label" for="admin-password">Password</label>
+    <input class="login-input" id="admin-password" type="password" placeholder="••••••••" />
+    <button class="login-btn" id="login-btn" onclick="doLogin()">✨ Log In as Super Admin</button>
+  </div>
+</div>
+
+<!-- MAIN ADMIN APP -->
+<div id="app-page" style="display:none; flex-direction:column; min-height:100vh;">
+  <header>
+    <div class="header-brand">
+      <span style="font-size:24px;">🇳🇵</span>
+      <div>
+        <h1>StockSathi Admin</h1>
+      </div>
+      <span class="header-badge" id="pending-badge">0 Pending</span>
+    </div>
+    <div class="header-actions">
+      <span style="color:rgba(255,255,255,0.7);font-size:13px;" id="admin-name-display"></span>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-chip pending">⏳ Pending <span class="stat-count" id="count-pending">—</span></div>
+    <div class="stat-chip approved">✅ Approved <span class="stat-count" id="count-approved">—</span></div>
+    <div class="stat-chip rejected">❌ Rejected <span class="stat-count" id="count-rejected">—</span></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('pending')" id="tab-pending">⏳ Pending</button>
+    <button class="tab-btn" onclick="switchTab('approved')" id="tab-approved">✅ Approved</button>
+    <button class="tab-btn" onclick="switchTab('rejected')" id="tab-rejected">❌ Rejected</button>
+    <button class="tab-btn" onclick="switchTab('all')" id="tab-all">📋 All</button>
+  </div>
+
+  <div class="content">
+    <div class="search-bar">
+      <input class="search-input" id="search-input" placeholder="🔍  Search by name, email, or phone..." oninput="filterCards()" />
+      <button class="refresh-btn" onclick="loadUsers()">↻ Refresh</button>
+    </div>
+    <div class="user-list" id="user-list">
+      <div class="loading-spinner">Loading shop registrations…</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ---------- CONFIG ----------
+  // The backend URL — change this to your deployed Render URL after deployment
+  const API_BASE = window.location.origin;
+
+  let authToken = localStorage.getItem('ss_admin_token');
+  let currentTab = 'pending';
+  let allUsers = [];
+  let currentAdminName = localStorage.getItem('ss_admin_name') || '';
+
+  // ---------- INIT ----------
+  window.onload = () => {
+    if (authToken) {
+      showApp();
+      loadStats();
+      loadUsers();
+    }
+  };
+
+  function showApp() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('app-page').style.display = 'flex';
+    document.getElementById('app-page').style.flexDirection = 'column';
+    if (currentAdminName) {
+      document.getElementById('admin-name-display').textContent = '👤 ' + currentAdminName;
+    }
+  }
+
+  // ---------- AUTH ----------
+  async function doLogin() {
+    const email = document.getElementById('admin-email').value.trim();
+    const password = document.getElementById('admin-password').value;
+    const errBox = document.getElementById('login-error');
+    const btn = document.getElementById('login-btn');
+    errBox.style.display = 'none';
+
+    if (!email || !password) {
+      showLoginError('Please enter email and password.');
+      return;
+    }
+
+    btn.textContent = 'Logging in…';
+    btn.disabled = true;
+
+    try {
+      const resp = await fetch(`${API_BASE}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await resp.json();
+
+      if (!resp.ok) throw new Error(data.error || 'Login failed');
+      if (data.user.role !== 'superadmin') throw new Error('Access denied. Not a super admin account.');
+
+      authToken = data.token;
+      currentAdminName = data.user.name;
+      localStorage.setItem('ss_admin_token', authToken);
+      localStorage.setItem('ss_admin_name', currentAdminName);
+      showApp();
+      loadStats();
+      loadUsers();
+    } catch (err) {
+      showLoginError(err.message);
+    } finally {
+      btn.textContent = '✨ Log In as Super Admin';
+      btn.disabled = false;
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.getElementById('login-page').style.display !== 'none') doLogin();
+  });
+
+  function doLogout() {
+    authToken = null;
+    localStorage.removeItem('ss_admin_token');
+    localStorage.removeItem('ss_admin_name');
+    document.getElementById('login-page').style.display = 'flex';
+    document.getElementById('app-page').style.display = 'none';
+    document.getElementById('admin-email').value = '';
+    document.getElementById('admin-password').value = '';
+  }
+
+  function showLoginError(msg) {
+    const el = document.getElementById('login-error');
+    el.textContent = '⚠️ ' + msg;
+    el.style.display = 'block';
+  }
+
+  // ---------- DATA ----------
+  async function apiFetch(path, options = {}) {
+    const resp = await fetch(`${API_BASE}${path}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authToken}`,
+        ...(options.headers || {}),
+      },
+    });
+    if (resp.status === 401 || resp.status === 403) { doLogout(); throw new Error('Session expired.'); }
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Request failed');
+    return data;
+  }
+
+  async function loadStats() {
+    try {
+      const data = await apiFetch('/api/admin/stats');
+      document.getElementById('count-pending').textContent = data.pending_count;
+      document.getElementById('count-approved').textContent = data.approved_count;
+      document.getElementById('count-rejected').textContent = data.rejected_count;
+      document.getElementById('pending-badge').textContent =
+        data.pending_count + (data.pending_count === 1 ? ' Pending' : ' Pending');
+    } catch (_) {}
+  }
+
+  async function loadUsers() {
+    document.getElementById('user-list').innerHTML = '<div class="loading-spinner">Loading…</div>';
+    try {
+      const statusFilter = currentTab === 'all' ? '' : `?status=${currentTab}`;
+      const data = await apiFetch(`/api/admin/users${statusFilter}`);
+      allUsers = data.users;
+      renderUsers(allUsers);
+    } catch (err) {
+      document.getElementById('user-list').innerHTML =
+        `<div class="empty-state"><span class="emoji">⚠️</span>${err.message}</div>`;
+    }
+  }
+
+  function renderUsers(users) {
+    const list = document.getElementById('user-list');
+    if (!users.length) {
+      const labels = { pending: 'No pending registrations 🎉', approved: 'No approved shops yet.', rejected: 'No rejected accounts.', all: 'No shops registered yet.' };
+      list.innerHTML = `<div class="empty-state"><span class="emoji">${currentTab === 'pending' ? '🎉' : '📭'}</span>${labels[currentTab] || 'Nothing here.'}</div>`;
+      return;
+    }
+    list.innerHTML = users.map(u => `
+      <div class="user-card ${u.status}" id="card-${u.id}">
+        <div class="user-info">
+          <div class="user-name">${esc(u.name)}</div>
+          <div class="user-meta">
+            <span>📧 ${esc(u.email)}</span>
+            ${u.phone ? `<span>📱 ${esc(u.phone)}</span>` : ''}
+            <span>👤 ${u.role}</span>
+          </div>
+          <div class="user-date">Registered: ${new Date(u.created_at).toLocaleString()}</div>
+        </div>
+        <div class="actions">
+          <span class="status-badge ${u.status}">${statusLabel(u.status)}</span>
+          ${u.status !== 'approved' ? `<button class="action-btn approve-btn" onclick="updateStatus(${u.id}, 'approved')">✅ Approve</button>` : ''}
+          ${u.status !== 'rejected' ? `<button class="action-btn reject-btn" onclick="updateStatus(${u.id}, 'rejected')">❌ Reject</button>` : ''}
+          ${u.status !== 'pending' ? `<button class="action-btn pending-btn" onclick="updateStatus(${u.id}, 'pending')">⏳ Set Pending</button>` : ''}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function filterCards() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const filtered = allUsers.filter(u =>
+      u.name.toLowerCase().includes(q) ||
+      u.email.toLowerCase().includes(q) ||
+      (u.phone || '').toLowerCase().includes(q)
+    );
+    renderUsers(filtered);
+  }
+
+  async function updateStatus(userId, newStatus) {
+    try {
+      await apiFetch(`/api/admin/users/${userId}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: newStatus }),
+      });
+      showToast(newStatus === 'approved' ? '✅ Shop approved!' : newStatus === 'rejected' ? '❌ Shop rejected.' : '⏳ Set back to pending.', newStatus === 'approved' ? 'success' : 'error');
+      loadStats();
+      loadUsers();
+    } catch (err) {
+      showToast('Error: ' + err.message, 'error');
+    }
+  }
+
+  // ---------- TABS ----------
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('search-input').value = '';
+    loadUsers();
+  }
+
+  // ---------- HELPERS ----------
+  function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function statusLabel(s) { return { pending: '⏳ Pending', approved: '✅ Approved', rejected: '❌ Rejected' }[s] || s; }
+
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show ' + type;
+    setTimeout(() => { t.className = 'toast'; }, 3000);
+  }
+</script>
+</body>
+</html>
